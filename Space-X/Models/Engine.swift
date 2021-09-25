@@ -7,9 +7,9 @@ import Foundation
 
 struct Engine : Codable {
     
-    let engineLossMax : AnyObject?
+    let engineLossMax : Int?
     let isp : Isp?
-    let layout : AnyObject?
+    let layout : String?
     let number : Int?
     let propellant1 : String?
     let propellant2 : String?
@@ -35,15 +35,15 @@ struct Engine : Codable {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        engineLossMax = try values.decodeIfPresent(AnyObject.self, forKey: .engineLossMax)
-        isp = Isp(from: decoder)
-        layout = try values.decodeIfPresent(AnyObject.self, forKey: .layout)
+        engineLossMax = try values.decodeIfPresent(Int.self, forKey: .engineLossMax)
+        isp = try Isp(from: decoder)
+        layout = try values.decodeIfPresent(String.self, forKey: .layout)
         number = try values.decodeIfPresent(Int.self, forKey: .number)
         propellant1 = try values.decodeIfPresent(String.self, forKey: .propellant1)
         propellant2 = try values.decodeIfPresent(String.self, forKey: .propellant2)
-        thrustSeaLevel = ThrustSeaLevel(from: decoder)
+        thrustSeaLevel = try ThrustSeaLevel(from: decoder)
         thrustToWeight = try values.decodeIfPresent(Int.self, forKey: .thrustToWeight)
-        thrustVacuum = ThrustVacuum(from: decoder)
+        thrustVacuum = try ThrustVacuum(from: decoder)
         type = try values.decodeIfPresent(String.self, forKey: .type)
         version = try values.decodeIfPresent(String.self, forKey: .version)
     }

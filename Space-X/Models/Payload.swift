@@ -19,7 +19,7 @@ struct Payload : Codable {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        compositeFairing = CompositeFairing(from: decoder)
+        compositeFairing = try CompositeFairing(from: decoder)
         option1 = try values.decodeIfPresent(String.self, forKey: .option1)
         option2 = try values.decodeIfPresent(String.self, forKey: .option2)
     }

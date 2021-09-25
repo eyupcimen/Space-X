@@ -7,7 +7,7 @@ import Foundation
 
 struct SecondStage : Codable {
     
-    let burnTimeSec : AnyObject?
+    let burnTimeSec : Int?
     let engines : Int?
     let fuelAmountTons : Int?
     let payloads : Payload?
@@ -25,12 +25,12 @@ struct SecondStage : Codable {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        burnTimeSec = try values.decodeIfPresent(AnyObject.self, forKey: .burnTimeSec)
+        burnTimeSec = try values.decodeIfPresent(Int.self, forKey: .burnTimeSec)
         engines = try values.decodeIfPresent(Int.self, forKey: .engines)
         fuelAmountTons = try values.decodeIfPresent(Int.self, forKey: .fuelAmountTons)
-        payloads = Payload(from: decoder)
+        payloads = try Payload(from: decoder)
         reusable = try values.decodeIfPresent(Bool.self, forKey: .reusable)
-        thrust = Thrust(from: decoder)
+        thrust = try Thrust(from: decoder)
     }
     
 }
