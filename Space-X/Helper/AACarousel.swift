@@ -107,7 +107,7 @@ public class AACarousel: UIView,UIScrollViewDelegate {
         layerView = UIView()
         layerView.backgroundColor = UIColor.black
         layerView.alpha = 0.6
-        scrollView.addSubview(layerView)
+        //scrollView.addSubview(layerView)
     }
     
     

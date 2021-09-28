@@ -1,24 +1,24 @@
 //
-//  RocketsRouter.swift
+//  FavoriteRocketsRouter.swift
 //  Space-X
 //
-//  Created by eyup cimen on 26.09.2021.
+//  Created by eyup cimen on 27.09.2021.
 //  Copyright (c) 2021 ___ORGANIZATIONNAME___. All rights reserved.
 //
 
 import UIKit
 
-@objc protocol RocketsRoutingLogic {
+@objc protocol FavoriteRocketsRoutingLogic {
     func routeToShowRocketDetail(segue: UIStoryboardSegue?)
 }
 
-protocol RocketsDataPassing {
-    var dataStore: RocketsDataStore? { get }
+protocol FavoriteRocketsDataPassing {
+    var dataStore: FavoriteRocketsDataStore? { get }
 }
 
-class RocketsRouter: NSObject, RocketsRoutingLogic, RocketsDataPassing {
-    weak var viewController: RocketsViewController?
-    var dataStore: RocketsDataStore?
+class FavoriteRocketsRouter: NSObject, FavoriteRocketsRoutingLogic, FavoriteRocketsDataPassing {
+    weak var viewController: FavoriteRocketsViewController?
+    var dataStore: FavoriteRocketsDataStore?
     
     // MARK: Routing
     func routeToShowRocketDetail(segue: UIStoryboardSegue?) {
@@ -29,8 +29,8 @@ class RocketsRouter: NSObject, RocketsRoutingLogic, RocketsDataPassing {
         }
     }
     // MARK: Navigation
-    func passDataToShowDetail(source: RocketsDataStore , destination: inout RocketDetailDataStore) {
-        guard let rockets = source.rockets, let selectedIndexPath = viewController?.mTableView.indexPathForSelectedRow else {
+    func passDataToShowDetail(source: FavoriteRocketsDataStore , destination: inout RocketDetailDataStore) {
+        guard let rockets = source.rockets, let selectedIndexPath = viewController?.fTableView.indexPathForSelectedRow else {
             return
         }
         let rocketID = rockets[selectedIndexPath.row].rocketId ?? ""

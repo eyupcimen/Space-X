@@ -9,13 +9,22 @@
 import UIKit
 
 enum RocketDetail {
-    // MARK: Use cases
-    enum Something {
+    enum Detail {
         struct Request {
+            var rocketId : String
         }
         struct Response {
+            var rocket : Rocket
         }
         struct ViewModel {
+            struct DisplayedRocket {
+                var id : Int
+                var rocketId : String
+                var rocketName : String
+                var description : String
+                var flickPaths : [String]
+            }
+            var displayedRocket: DisplayedRocket
         }
     }
 }

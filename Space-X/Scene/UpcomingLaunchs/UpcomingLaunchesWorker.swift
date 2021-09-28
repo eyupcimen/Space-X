@@ -1,5 +1,5 @@
 //
-//  RocketDetailWorker.swift
+//  UpcomingLaunchesWorker.swift
 //  Space-X
 //
 //  Created by eyup cimen on 27.09.2021.
@@ -8,5 +8,5 @@
 
 import UIKit
 
-class RocketDetailWorker : SpaceWorkerProtocol {
+class UpcomingLaunchesWorker {
 }

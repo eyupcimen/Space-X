@@ -12,7 +12,6 @@ import SVProgressHUD
 
 class Util {
     static var shared = Util()
-    //var router : AppRouter!
     var window = UIWindow()
     
     init() {
@@ -27,9 +26,9 @@ class Util {
     }
     func removeHud() {
         DispatchQueue.global(qos: .default).async {
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3 , execute:{
                 SVProgressHUD.dismiss()
-            }
+            })
         }
     }
 }

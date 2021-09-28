@@ -1,19 +1,19 @@
 //
-//  RocketsModels.swift
+//  FavoriteRocketsModels.swift
 //  Space-X
 //
-//  Created by eyup cimen on 26.09.2021.
+//  Created by eyup cimen on 27.09.2021.
 //  Copyright (c) 2021 ___ORGANIZATIONNAME___. All rights reserved.
 //
 
 import UIKit
 
-enum Rockets {
-    enum FetchRockets {
+enum FavoriteRockets {
+    enum Favorite {
         struct Request {
         }
         struct Response {
-            var rockets : [Rocket]
+            var rockets: [Rocket]
         }
         struct ViewModel {
             struct DisplayedRocket {
@@ -21,7 +21,7 @@ enum Rockets {
                 var rocketId : String
                 var rocketName : String
                 var description : String
-                var flickPath : [String]
+                var flickPaths : [String]
             }
             var displayedRocket: [DisplayedRocket]
         }

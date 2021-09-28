@@ -13,12 +13,11 @@ import SVProgressHUD
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    //var router : AppRouter!
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        /// app.router.mainTabbarBuild()
-        SVProgressHUD.setOffsetFromCenter(UIOffset(horizontal: UIScreen.main.bounds.width / 2,
-        vertical: UIScreen.main.bounds.height / 2))
+
+        //SVProgressHUD.setOffsetFromCenter(UIOffset(horizontal: UIScreen.main.bounds.width / 2,
+        // vertical: UIScreen.main.bounds.height / 2))
         
         if (UserDefaults.standard.object(forKey: "kFavoriteRocketDefaultKey") == nil) {
             UserDefaults.standard.set([] , forKey: "kFavoriteRocketDefaultKey")

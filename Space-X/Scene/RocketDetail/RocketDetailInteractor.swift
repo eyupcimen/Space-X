@@ -9,24 +9,28 @@
 import UIKit
 
 protocol RocketDetailBusinessLogic {
-    func doSomething(request: RocketDetail.Something.Request)
+    func getRocketDetail(request: RocketDetail.Detail.Request)
 }
 
 protocol RocketDetailDataStore {
-    //var name: String { get set }
+    var rocketId: String { get set }
 }
 
 class RocketDetailInteractor: RocketDetailBusinessLogic, RocketDetailDataStore {
-    var presenter: RocketDetailPresentationLogic?
-    var worker: RocketDetailWorker?
-    //var name: String = ""
     
-    // MARK: Do something
-    func doSomething(request: RocketDetail.Something.Request) {
-        worker = RocketDetailWorker()
-        worker?.doSomeWork()
-        
-        let response = RocketDetail.Something.Response()
-        presenter?.presentSomething(response: response)
+    var presenter: RocketDetailPresentationLogic?
+    var worker: SpaceWorker?
+    var rocketId: String = ""
+    
+    func getRocketDetail(request: RocketDetail.Detail.Request) {
+        worker = SpaceWorker()
+        worker?.getRocketDetail(rocketId: self.rocketId, completion: { (rocket) in
+            
+            let response = RocketDetail.Detail.Response(rocket: rocket)
+            self.presenter?.presentRocketDetail(response: response)
+
+        }, failure: { (error) in
+            
+        })
     }
 }

@@ -1,22 +1,22 @@
 //
-//  RocketsViewController.swift
+//  FavoriteRocketsViewController.swift
 //  Space-X
 //
-//  Created by eyup cimen on 26.09.2021.
+//  Created by eyup cimen on 27.09.2021.
 //  Copyright (c) 2021 ___ORGANIZATIONNAME___. All rights reserved.
 //
 
 import UIKit
 
-protocol RocketsDisplayLogic: class {
-    func displayAllRockests(viewModel: Rockets.FetchRockets.ViewModel)
+protocol FavoriteRocketsDisplayLogic: class {
+    func displayFavoriteRockets(viewModel: FavoriteRockets.Favorite.ViewModel)
 }
 
-class RocketsViewController: UIViewController, RocketsDisplayLogic {
+class FavoriteRocketsViewController: UIViewController, FavoriteRocketsDisplayLogic {
     
-    @IBOutlet weak var mTableView: UITableView!
-    var interactor: RocketsBusinessLogic?
-    var router: (NSObjectProtocol & RocketsRoutingLogic & RocketsDataPassing)?
+    @IBOutlet weak var fTableView: UITableView!
+    var interactor: FavoriteRocketsBusinessLogic?
+    var router: (NSObjectProtocol & FavoriteRocketsRoutingLogic & FavoriteRocketsDataPassing)?
     
     // MARK: Object lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -32,9 +32,9 @@ class RocketsViewController: UIViewController, RocketsDisplayLogic {
     // MARK: Setup
     private func setup() {
         let viewController = self
-        let interactor = RocketsInteractor()
-        let presenter = RocketsPresenter()
-        let router = RocketsRouter()
+        let interactor = FavoriteRocketsInteractor()
+        let presenter = FavoriteRocketsPresenter()
+        let router = FavoriteRocketsRouter()
         viewController.interactor = interactor
         viewController.router = router
         interactor.presenter = presenter
@@ -51,7 +51,6 @@ class RocketsViewController: UIViewController, RocketsDisplayLogic {
             }
         }
     }
-    
     // MARK: View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,20 +63,21 @@ class RocketsViewController: UIViewController, RocketsDisplayLogic {
     }
     
     fileprivate func setUpUI() {
-        mTableView.register(MovieTableCell.self)
+        title = "Favorite Rockets"
+        fTableView.register(MovieTableCell.self)
     }
     
     fileprivate func fetchAllRockets() {
-        let request = Rockets.FetchRockets.Request()
-        interactor?.fetchAllRockests(request: request)
+        let request = FavoriteRockets.Favorite.Request()
+        interactor?.fetchFavoriteRockets(request: request)
     }
     
-    var rockets : [Rockets.FetchRockets.ViewModel.DisplayedRocket] = []
+    var rockets : [FavoriteRockets.Favorite.ViewModel.DisplayedRocket] = []
     
-    func displayAllRockests(viewModel: Rockets.FetchRockets.ViewModel) {
-        rockets = viewModel.displayedRocket
+    func displayFavoriteRockets(viewModel: FavoriteRockets.Favorite.ViewModel) {
+        self.rockets = viewModel.displayedRocket
         DispatchQueue.main.async {
-            self.mTableView.reloadData()
+            self.fTableView.reloadData()
         }
     }
     
@@ -88,14 +88,11 @@ class RocketsViewController: UIViewController, RocketsDisplayLogic {
         } else {
             addFavoriteRocket(rocketId: rocket.id)
         }
-        DispatchQueue.main.async {
-            self.mTableView.reloadData()
-        }
+        fetchAllRockets()
     }
 }
 
-
-extension RocketsViewController : UITableViewDelegate, UITableViewDataSource {
+extension FavoriteRocketsViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 130

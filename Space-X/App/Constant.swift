@@ -10,7 +10,7 @@ import Foundation
 import UIKit
  
 enum StoryBoard : String {
-     
+    
     case Main
     case MainTabbar
     
@@ -23,4 +23,6 @@ extension String {
     static let Main = "Main"
     static let MainTabbar = "MainTabbar"
     static let RocketsViewController = "RocketsViewController"
+    static let FavoriteRocketsViewController = "FavoriteRocketsViewController"
+    static let UpcomingLaunchesViewController = "UpcomingLaunchesViewController"
 }

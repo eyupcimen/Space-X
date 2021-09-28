@@ -1,26 +1,24 @@
 //
-//  RocketDetailViewController.swift
+//  LaunchDetailViewController.swift
 //  Space-X
 //
-//  Created by eyup cimen on 27.09.2021.
+//  Created by eyup cimen on 28.09.2021.
 //  Copyright (c) 2021 ___ORGANIZATIONNAME___. All rights reserved.
 //
 
 import UIKit
 
-protocol RocketDetailDisplayLogic: class {
-    func displayRocketDetail(viewModel: RocketDetail.Detail.ViewModel)
+protocol LaunchDetailDisplayLogic: class {
+    func displayLaunchDetail(viewModel: LaunchDetail.Detail.ViewModel)
 }
 
-class RocketDetailViewController: UIViewController, RocketDetailDisplayLogic {
-    
+class LaunchDetailViewController: UIViewController, LaunchDetailDisplayLogic {
     @IBOutlet weak var titleLabel : UILabel!
-    @IBOutlet weak var detailTextView: UITextView!
+    @IBOutlet weak var detailsLabel : UILabel!
+    @IBOutlet weak var launchDateLabel : UILabel!
     @IBOutlet weak var carouselView: AACarousel!
-    @IBOutlet weak var favoriteButton: UIButton!
-    
-    var interactor: RocketDetailBusinessLogic?
-    var router: (NSObjectProtocol & RocketDetailRoutingLogic & RocketDetailDataPassing)?
+    var interactor: LaunchDetailBusinessLogic?
+    var router: (NSObjectProtocol & LaunchDetailRoutingLogic & LaunchDetailDataPassing)?
     
     // MARK: Object lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -36,9 +34,9 @@ class RocketDetailViewController: UIViewController, RocketDetailDisplayLogic {
     // MARK: Setup
     private func setup() {
         let viewController = self
-        let interactor = RocketDetailInteractor()
-        let presenter = RocketDetailPresenter()
-        let router = RocketDetailRouter()
+        let interactor = LaunchDetailInteractor()
+        let presenter = LaunchDetailPresenter()
+        let router = LaunchDetailRouter()
         viewController.interactor = interactor
         viewController.router = router
         interactor.presenter = presenter
@@ -47,65 +45,40 @@ class RocketDetailViewController: UIViewController, RocketDetailDisplayLogic {
         router.dataStore = interactor
     }
     
-    // MARK: View lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
-        fetchRocketDetail()
-    }
-    
-    // MARK: Do business logic
-    private func fetchRocketDetail() {
-        guard let router = self.router, let dataStore = router.dataStore else {return}
-        let request = RocketDetail.Detail.Request(rocketId: dataStore.rocketId )
-        interactor?.getRocketDetail(request: request)
+        fetchLaunchDetail()
     }
     
     var imagePaths : [String] = []
-    var rocket : RocketDetail.Detail.ViewModel.DisplayedRocket?
+    var launch : LaunchDetail.Detail.ViewModel.DisplayedLaunch?
     
-    func displayRocketDetail(viewModel: RocketDetail.Detail.ViewModel) {
-
-        self.rocket = viewModel.displayedRocket
-        guard let rocket = self.rocket else {return}
-        title = rocket.rocketName
-        self.titleLabel.text = rocket.rocketName
-        self.detailTextView.text = rocket.description
-        self.imagePaths = rocket.flickPaths
+    func fetchLaunchDetail() {
+        guard let router = self.router, let dataStore = router.dataStore else {return}
+        let request = LaunchDetail.Detail.Request(launchId: dataStore.launchId )
+        interactor?.getLaunchDetail(request: request)
+    }
+    
+    func displayLaunchDetail(viewModel: LaunchDetail.Detail.ViewModel) {
+        self.launch = viewModel.displayedLaunch
+        guard let launch = self.launch else {return}
+        title = launch.rocketName
+        titleLabel.text = launch.missionName
+        detailsLabel.text = launch.details
+        launchDateLabel.text = launch.launchDate
+        imagePaths.append(launch.missionPatchBig)
         fillSlider()
-        favoriteButtonSetImage(rocketId: rocket.id)
     }
     
-    private func favoriteButtonSetImage(rocketId:Int) {
-        if getCheckFavoriteRocket(rocketId: rocketId ) {
-            favoriteButton.setImage(UIImage(named: "star_fill"), for: .normal)
-        } else {
-            favoriteButton.setImage(UIImage(named: "star"), for: .normal)
-        }
-    }
-   
     private func fillSlider() {
         carouselView.delegate = self
         carouselView.setCarouselData(paths: self.imagePaths,  describedTitle: [], isAutoScroll: true, timer: 5.0, defaultImage: "defaultImage")
         carouselView.setCarouselOpaque(layer: false, describedTitle: false, pageIndicator: false)
         carouselView.setCarouselLayout(displayStyle: 0, pageIndicatorPositon: 2, pageIndicatorColor: nil, describedTitleColor: nil, layerColor: nil)
     }
-    
-    @IBAction func favoriteAction(_ sender: UIButton) {
-        guard let rocket = self.rocket else {return}
-        if getCheckFavoriteRocket(rocketId: rocket.id ) {
-            removeFavoriteRocket(rocketId: rocket.id)
-        } else {
-            addFavoriteRocket(rocketId: rocket.id)
-        }
-        favoriteButtonSetImage(rocketId: rocket.id)
-    }
 }
 
-extension RocketDetailViewController : AACarouselDelegate {
+extension LaunchDetailViewController : AACarouselDelegate {
     
     func downloadImages(_ url: String, _ index:Int) {
         let imageView = UIImageView()
@@ -118,6 +91,7 @@ extension RocketDetailViewController : AACarouselDelegate {
                 print("Error: \(error)")
             }
         })
+        imageView.contentMode = .scaleAspectFit
     }
 
     func didSelectCarouselView(_ view: AACarousel ,_ index:Int) {
@@ -125,6 +99,8 @@ extension RocketDetailViewController : AACarouselDelegate {
     }
 
     func callBackFirstDisplayView(_ imageView: UIImageView, _ url: [String], _ index: Int) {
+        
         imageView.kf.setImage(with: URL(string: url[index]), placeholder: UIImage.init(named: "defaultImage"), options: [.transition(.fade(1))], progressBlock: nil, completionHandler: nil)
+        imageView.contentMode = .scaleAspectFit
     }
 }

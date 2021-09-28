@@ -21,6 +21,10 @@ func getCheckFavoriteRocket(rocketId:Int) -> Bool {
     return UserDefaultManager.instance.getCheckFavoriteRockets(rocketId: rocketId)
 }
 
+func getFavoriteRockets() -> [Int]? {
+    return UserDefaultManager.instance.getAllFavoriteRockets()
+}
+
 class UserDefaultManager {
      
     private let userDefaults                    = UserDefaults.standard
@@ -36,7 +40,7 @@ class UserDefaultManager {
 
     init() {}
     
-    func getCheckFavoriteRockets(rocketId : Int) -> Bool {
+    fileprivate func getCheckFavoriteRockets(rocketId : Int) -> Bool {
         if saveInUserDefaults {
             if let favoriteList = userDefaults.object(forKey: kFavoriteRocketDefaultKey) as? [Int] {
                 return (favoriteList.firstIndex(where: {$0 == rocketId}) != nil)

@@ -17,7 +17,7 @@ struct CompositeFairing : Codable {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        diameter = try Diameter(from: decoder)
-        height = try Height(from: decoder)
+        diameter = try values.decodeIfPresent(Diameter.self, forKey: .diameter)
+        height = try values.decodeIfPresent(Height.self, forKey: .height)
     }
 }

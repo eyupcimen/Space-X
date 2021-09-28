@@ -14,20 +14,17 @@ struct AppConst {
 }
 
 enum ApiService {
-    
     case getAllRockects
-    
-    case getUserPosts(userId:Int)
-    case getComments(postId:Int)
-    case getAlbums
-    case getPhotos(albumId:Int)
+    case getRocketDetail(rocketId:String)
+    case getUpcomingLaunches
+    case getLaunchDetail(launchId:String)
 }
 
 extension ApiService : TargetType {
     
     var baseURL: URL {
         switch self {
-        case .getAllRockects, .getUserPosts, .getComments, .getAlbums, .getPhotos :
+        case .getAllRockects, .getRocketDetail, .getUpcomingLaunches, .getLaunchDetail :
             return URL(string: "\(AppConst.baseUrl)")!
         }
     }
@@ -36,64 +33,46 @@ extension ApiService : TargetType {
         switch self {
         case .getAllRockects:
             return "/rockets"
-        case .getUserPosts:
-            return "/posts"
-        case .getComments:
-            return "/comments"
-        case .getAlbums:
-            return "/albums"
-        case .getPhotos:
-            return "/photos"
+        case .getRocketDetail(let rocketId):
+            return "/rockets/\(rocketId)"
+        case .getUpcomingLaunches:
+            return "/launches/upcoming"
+        case .getLaunchDetail(let launchId):
+            return "/launches/\(launchId)"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .getAllRockects, .getUserPosts, .getComments, .getAlbums, .getPhotos:
+        case .getAllRockects, .getRocketDetail, .getUpcomingLaunches, .getLaunchDetail:
             return .get
         }
     }
     
     var parameters: [String : Any]? {
-        
         switch self {
-        case .getAllRockects, .getAlbums:
+        case .getAllRockects, .getRocketDetail, .getUpcomingLaunches, .getLaunchDetail:
             return [:]
-        case .getUserPosts(let userId):
-            return ["userId":userId]
-        case .getComments(let postId):
-            return ["postId":postId]
-        case .getPhotos(let albumId):
-            return ["albumId":albumId]
         }
     }
     
     var parameterEncoding:  Moya.ParameterEncoding {
         switch self {
-        case .getAllRockects, .getAlbums:
+        case .getAllRockects, .getRocketDetail, .getUpcomingLaunches, .getLaunchDetail:
             return URLEncoding.default
-        case .getUserPosts, .getComments, .getPhotos:
-            return URLEncoding.queryString
         }
     }
     
     var task: Task {
         switch self {
-        case .getAllRockects, .getAlbums:
+        case .getAllRockects, .getRocketDetail, .getUpcomingLaunches, .getLaunchDetail:
             return .requestParameters(parameters: parameters!, encoding: URLEncoding.default)
-        case .getUserPosts(let userId):
-            return .requestParameters(parameters: ["userId":userId], encoding: URLEncoding.queryString)
-        case .getComments(let postId):
-            return .requestParameters(parameters: ["postId":postId], encoding: URLEncoding.queryString)
-
-        case .getPhotos(let albumId):
-            return .requestParameters(parameters: ["albumId":albumId], encoding: URLEncoding.queryString)
         }
     }
     
     var headers: [String: String]? {
         switch self {
-        case .getAllRockects, .getUserPosts, .getComments, .getAlbums, .getPhotos:
+        case .getAllRockects,.getRocketDetail, .getUpcomingLaunches, .getLaunchDetail:
             return ["Content-type": "application/json","Accept": "application/json"]
         }
     }
@@ -102,7 +81,6 @@ extension ApiService : TargetType {
         return "".data(using: .utf8)!
     }
 }
-
 
 private extension String {
     var urlEscaped: String {
@@ -114,21 +92,20 @@ private extension String {
     }
 }
 
-
 final class NetworkAdapter {
-    
     @discardableResult static public func request<T:Decodable>(target: ApiService ,
                                                   success successCallBack: @escaping (T) -> Void ,
                                                   failure failureCallBack: @escaping (MoyaError) -> Void) -> Cancellable {
+        Util.shared.showHud()
         let networklogger = NetworkLoggerPlugin()
         let pluginsArr      : [PluginType] = [networklogger]
         let provider        = MoyaProvider<ApiService>(plugins:pluginsArr)
         
         return provider.request(target) { result in
+            Util.shared.removeHud()
             switch result {
             case let .success(response):
                 do{
-                    print(try response.mapString())
                     let responseObject = try JSONDecoder().decode(T.self, from: response.data )
                     successCallBack(responseObject)
                 } catch {
@@ -150,39 +127,5 @@ public class BaseResult<T: Codable> : Decodable {
     required public init(from decoder: Decoder) throws {
         let values = try decoder.singleValueContainer()
         result = try values.decode([T].self)
-    }
-}
-
-public class RocketsResponse<T: Codable> : Decodable {
-    
-    let rockects : [T]?
-  
-    required public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        rockects = try container.decode([T].self)
-    }
-}
-
-
-@propertyWrapper
-struct DefaultEmptyArray<T:Codable> {
-    var wrappedValue: [T] = []
-}
-
-extension DefaultEmptyArray: Codable {
-    func encode(to encoder: Encoder) throws {
-        try wrappedValue.encode(to: encoder)
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        wrappedValue = try container.decode([T].self)
-    }
-}
-
-extension KeyedDecodingContainer {
-    func decode<T:Decodable>(_ type: DefaultEmptyArray<T>.Type,
-                forKey key: Key) throws -> DefaultEmptyArray<T> {
-        try decodeIfPresent(type, forKey: key) ?? .init()
     }
 }
