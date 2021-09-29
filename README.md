@@ -6,5 +6,6 @@ Installation
 
 The project uses Pod as dependency manager.
 
-$ cd <root_project>
-$ pod install
+`$ cd <root_project>`
+`$ pod install`
+
